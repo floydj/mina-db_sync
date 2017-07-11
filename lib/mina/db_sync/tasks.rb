@@ -1,6 +1,4 @@
-#require 'rake'
 require 'yaml'
-#require 'mina'
 require 'mina/bundler'
 
 namespace :db do

@@ -1,8 +1,7 @@
-# Mina::DbSync
+# Mina Db Sync
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/mina/db_sync`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Copy specific tables between your production and development databases
+using [Mina](https://github.com/mina-deploy/mina) for your Rails app.
 
 ## Installation
 
@@ -22,18 +21,38 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Get data from the server to your local db:
 
-## Development
+```
+bundle exec mina db:get_tables
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Get data from your local db to the server:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```
+bundle exec mina db:put_tables
+```
 
-## Contributing
+You'll be asked to supply the name(s) of any database tables you'd like
+to be copied over. All data in the target table(s) will be removed as part
+of the process, so make sure you backup first if you're paranoid.
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/Jason Floyd/mina-db_sync.
+You'll probably find it easier to binstub mina:
 
+```
+bundle binstubs mina
+```
+
+And then:
+
+```
+bin/mina db:get_tables
+bin/mina db:put_tables
+```
+
+## Database Support
+
+Right now, this is only for postgresql, but I hope to add MySQL support in the future.
 
 ## License
 

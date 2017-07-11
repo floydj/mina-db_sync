@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Jason Floyd"]
   spec.email         = ["jason.floyd@camfil.com"]
 
-  spec.summary       = %q{Sync database tables between production & development.}
+  spec.summary       = %q{Sync database tables between production & development using mina.}
   spec.description   = ''
-  #spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = 'https://github.com/floydj/mina-db_sync'
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
