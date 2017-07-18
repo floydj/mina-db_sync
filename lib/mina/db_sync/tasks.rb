@@ -46,14 +46,15 @@ end
 
 def backup_tables(table_names)
   db_credentials
-  command %{pg_dump --format=c --no-owner #{tweak_tables(table_names)} $DATABASE > #{db_file}}
+  backup_command(table_names)
   command "gzip -f #{db_file}"
 end
 
 def restore_tables
   db_credentials
   command %{gunzip -f #{db_archive}}
-  command %{pg_restore --no-owner --username=$USERNAME --clean --dbname=$DATABASE #{db_file}}
+  restore_command
+  command %{rm #{db_file}} unless fetch(:db_sync_debug)
 end
 
 def db_archive
@@ -68,11 +69,45 @@ end
 
 def tweak_tables(table_names)
   if table_names.to_a.empty?
-    STDOUT.write "Tables to get: "
+    STDOUT.write "Enter table name(s), separated by a space: "
     tables = STDIN.gets.strip
   else
     tables = table_names.to_a.join(' ')
   end
 
-  tables.split(' ').map { |table| "--table=#{table}" }.join(' ')
+  return tables if mysql?
+
+  if postgres?
+    return tables.split(' ').map { |table| "--table=#{table}" }.join(' ')
+  end
+end
+
+def postgres?
+  fetch(:db_sync_database) == 'postgres'
+end
+
+def mysql?
+  fetch(:db_sync_database) == 'mysql'
+end
+
+def backup_command(table_names)
+  if postgres?
+    command %{pg_dump --format=c --no-owner #{tweak_tables(table_names)} $DATABASE > #{db_file}}
+    return
+  end
+
+  if mysql?
+    command %{mysqldump -u$USERNAME -p$PASSWORD $DATABASE #{tweak_tables(table_names)} > #{db_file}}
+  end
+end
+
+def restore_command
+  if postgres?
+    command %{pg_restore --no-owner --username=$USERNAME --clean --dbname=$DATABASE #{db_file}}
+    return
+  end
+
+  if mysql?
+    command %{mysql -u$USERNAME --password=$PASSWORD $DATABASE < #{db_file}}
+  end
 end

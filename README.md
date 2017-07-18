@@ -2,6 +2,10 @@
 
 Copy specific tables between your production and development databases
 using [Mina](https://github.com/mina-deploy/mina) for your Rails app.
+All authentication is based on your database.yml files.
+
+## Requirements
+* rsync
 
 ## Installation
 
@@ -19,40 +23,47 @@ Or install it yourself as:
 
     $ gem install mina-db_sync
 
+Now add the following to your config/deploy.rb file:
+
+```ruby
+require 'mina/db_sync'
+
+# configure which database you're using:
+set :db_sync_database, 'postgres' #or 'mysql'
+
+# optionally turn on debugging, which leaves the sql file after sync:
+set :db_sync_debug, true
+```
+
 ## Usage
 
 Get data from the server to your local db:
 
 ```
-bundle exec mina db:get_tables
+mina db:get_tables
 ```
 
 Get data from your local db to the server:
 
 ```
-bundle exec mina db:put_tables
+mina db:put_tables
 ```
 
 You'll be asked to supply the name(s) of any database tables you'd like
 to be copied over. All data in the target table(s) will be removed as part
 of the process, so make sure you backup first if you're paranoid.
 
-You'll probably find it easier to binstub mina:
+Or you can specify the tables you want from the beginning:
 
-```
-bundle binstubs mina
-```
+    $ mina db:get_tables[table1,table2,table3]
 
-And then:
+If you're using Zsh:
 
-```
-bin/mina db:get_tables
-bin/mina db:put_tables
-```
+    $ mina db:get_tables\[table1,table2,table3\]
 
 ## Database Support
-
-Right now, this is only for postgresql, but I hope to add MySQL support in the future.
+* MySQL
+* Postgresql
 
 ## License
 
