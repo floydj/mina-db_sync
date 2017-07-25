@@ -97,7 +97,7 @@ def backup_command(table_names)
   end
 
   if mysql?
-    command %{mysqldump -u$USERNAME -p$PASSWORD $DATABASE #{tweak_tables(table_names)} > #{db_file}}
+    command %{mysqldump -u$USERNAME --password="$PASSWORD" $DATABASE #{tweak_tables(table_names)} > #{db_file}}
   end
 end
 
@@ -108,6 +108,6 @@ def restore_command
   end
 
   if mysql?
-    command %{mysql -u$USERNAME --password=$PASSWORD $DATABASE < #{db_file}}
+    command %{mysql -u$USERNAME --password="$PASSWORD" $DATABASE < #{db_file}}
   end
 end
